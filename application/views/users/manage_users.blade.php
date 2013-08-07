@@ -12,7 +12,7 @@
 				<thead>
 					<tr>
 						<th>Delete</th>
-						<th>Edit</th>
+						<th width="250">Username</th>
 						<th width="250">Email</th>
 						<th width="250">First Name</th>
 						<th width="250">Last Name</th>
@@ -22,21 +22,19 @@
 				<tbody>
 					@foreach ($accounts as $account)
 					<tr>
-						<td style="text-align: center;">
-							<img class="delete_btn" style="cursor: pointer;" width="25px" src={{ URL::base() . '/img/delete.png' }} />
-						</td>
 						<td>
-							<a href="edit_user/<?php echo $account->id; ?>">
-								<img class="edit_btn" style="cursor: pointer;"  width="22px" src={{ URL::base() . '/img/edit.png' }}  />
+							<a href="#">
+								<img class="delete_btn" style="cursor: pointer;"  width="22px" src={{ URL::base() . '/img/delete.png' }}  />
 							</a>
 						</td>
+						<td>{{ $account->user->username }}</td>
 						<input type="hidden" name="account_id_hidden" value={{ $account->id }} ></input>
-						<td class="account_email">{{ $account->email }}</td>
-						<td class="account_fname">{{ $account->fname }}</td>
-						<td class="account_lname">{{ $account->lname }}</td>
+						<td>{{ $account->email }}</td>
+						<td>{{ $account->fname }}</td>
+						<td>{{ $account->lname }}</td>
 						<td>
 							<input type="hidden" name="type_id_hidden" value={{ $account->type_id }} >
-							<span class="type_name">{{ $account->type->name }}</span>
+							<span>{{ $account->type->name }}</span>
 						</td>
 					</tr>
 					@endforeach
@@ -49,15 +47,15 @@
 	<script>
 
 			$(".delete_btn").click( function() {
-				/*var account_id = $(this).closest('tr').find('input[name="account_id_hidden"]').val();*/
+				var account_id = $(this).closest('tr').find('input[name="account_id_hidden"]').val();
 				var x = confirm("Are you sure?");
 				if (x==true)
 				{
-					/*$.post(BASE+'/delete_user', {
+					$.post(BASE+'/delete_user', {
 						account_id: account_id
 					}, function(data) {
 						location.reload();	
-					});*/
+					});
 				}
 			});
 			//Filter table 

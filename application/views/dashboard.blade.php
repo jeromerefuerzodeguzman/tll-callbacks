@@ -6,8 +6,8 @@ Dashboard
 
 
 @section('content')
-	<h6>CALLBACKS</h6>
-	<table>
+	<h6 style="text-decoration: underline">CALLBACKS</h6>
+	<table style="font-size: 14px;" width="720px" >
 		<thead>
 			<tr>
 				<th>View</th>
@@ -18,6 +18,7 @@ Dashboard
 				<th>Contact Name</th>
 				<th>Industry</th>
 				<th>Disposition</th>
+				<th>Comments</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -33,15 +34,16 @@ Dashboard
 				<td>{{ $callback->contact_name }}</td>
 				<td>{{ $callback->industry_name }}</td>
 				<td>{{ $callback->disposition->name }}</td>
+				<td>{{ $callback->comments }}</td>
 			</tr>
 			@endforeach
 		</tbody>
 	</table>
 	<hr />
-	<button class="tiny button round">Click to View Expire Callbacks</button>
+	<button class="tiny button round">Click to View Expired Callbacks</button>
 	<div id="expired" style="display: none;">
-		<h6>EXPIRED CALLBACKS</h6>
-		<table>
+		<h6 style="text-decoration: underline">EXPIRED CALLBACKS</h6>
+		<table style="font-size: 14px;" width="720px" >
 			<thead>
 				<tr>
 					<th>View</th>
@@ -56,7 +58,7 @@ Dashboard
 			</thead>
 			<tbody>
 				@foreach($ecallbacks as $ecallback)
-				<tr>
+				<tr style="font-size: 12px;">
 					<td style="text-align: center;">
 						<a href="view_callback/<?php echo $ecallback->id; ?>"><img class="view_btn" style="cursor: pointer;" width="15px" src={{ URL::base() . '/img/view.png' }} /></a>
 					</td>

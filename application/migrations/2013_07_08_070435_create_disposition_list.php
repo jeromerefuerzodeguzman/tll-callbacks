@@ -42,16 +42,10 @@ class Create_Disposition_List {
 						'updated_at' => date('Y-m-d H:i:s')
 					),
 				array( 
-						'name' => 'Comments',
+						'name' => 'Callback',
 						'created_at' => date('Y-m-d H:i:s'),
 						'updated_at' => date('Y-m-d H:i:s')
 					),
-				array( 
-						'name' => 'Calendar to set Date and Time for callback',
-						'created_at' => date('Y-m-d H:i:s'),
-						'updated_at' => date('Y-m-d H:i:s')
-					)
-
 			)
 		);
 	}

@@ -7,7 +7,7 @@ Route::post('users/authenticate', array('uses' => 'users@authenticate'));
 Route::post('users/add_user', array('uses' => 'users@add_user'));
 Route::any('registration', array('uses' => 'users@registration'));
 Route::any('manage_users', array('uses' => 'users@manage_users'));
-Route::any('edit_user/(:num)', array('uses' => 'accounts@edit_view'));
+/*Route::any('edit_user/(:num)', array('uses' => 'accounts@edit_view'));*/
 Route::post('delete_user', array('uses' => 'accounts@delete'));
 
 //dashboard
@@ -19,16 +19,19 @@ Route::any('create_callback', array('before' => 'auth', 'uses' => 'callbacks@ind
 Route::post('create_callback/add', array('uses' => 'callbacks@create'));
 Route::get('view_callback/(:num)', array('uses' => 'callbacks@view'));
 Route::post('transfer_callback', array('uses' => 'callbacks@transfer_callback'));
+Route::post('update_callback', array('uses' => 'callbacks@update'));
 
 //ajax for company names autocomplete
 Route::get('autocomplete_companyname', array('uses' => 'callbacks@companyname_list'));
 
 //view by dispositions
 Route::any('disposition_list', array('uses' => 'callbacks@disposition_list'));
+Route::post('disposition_list_bydate', array('uses' => 'callbacks@disposition_list_bydate'));
 
 //view by agent
 Route::any('agent_list', array('uses' => 'callbacks@agent_list'));
-
+Route::post('agent_list_bydate', array('uses' => 'callbacks@agent_list_bydate'));
+Route::get('agent_callbacks/(:num)', array('uses' => 'callbacks@agent_callbacks'));
 //search
 Route::any('search', array('uses' => 'callbacks@search'));
 Route::post('search_callback', array('uses' => 'callbacks@search_callback'));

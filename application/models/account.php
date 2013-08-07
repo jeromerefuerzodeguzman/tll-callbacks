@@ -15,5 +15,6 @@ class Account extends Eloquent {
 		$user = User::find($id)->account;
 		$is_supervisor = Accounttype::find($user->type_id);
 		return ($is_supervisor->name == 'supervisor' ? true : false);
-	}	
+	}
+
 }

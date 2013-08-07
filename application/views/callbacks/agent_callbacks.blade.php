@@ -1,44 +1,13 @@
 @layout('layouts.default')
 
 @section('title')
-Search Callbacks
+"{{ $agent->user->username }}" LIST
 @endsection
 
 
 @section('content')
-	{{ Form::open('search_callback', 'POST', array('class' => 'custom')) }}
-	{{ Form::hidden('account_type', Auth::user()->account->type->name)}}
-	{{ Form::hidden('account_id', Auth::user()->account->id)}}
-	<table width="450px">
-		<tr>
-			<td>
-				{{ Form::label('field', 'Search by:') }}
-			</td>
-			<td>
-				{{ Form::select('field', $field) }}
-			</td>
-		</tr>
-		<tr>
-			<td>
-				{{ Form::label('keyword', 'Keyword:') }}
-			</td>
-			<td>
-				{{ Form::text('keyword', Input::old('keyword')) }}
-			</td>
-		</tr>
-		<tr>
-			<td>
-				{{ Form::submit('Search', array('class' => 'button radius')) }}
-			</td>
-			<td>
-			</td>
-		</tr>
-	</table>
-	{{ Form::close() }}
-	<hr />
-	@if(isset($list))
-	<h6>CALLBACKS</h6>
-	<table>
+	<h6 style="text-decoration: underline">CALLBACKS</h6>
+	<table style="font-size: 14px;" width="720px" >
 		<thead>
 			<tr>
 				<th>View</th>
@@ -49,13 +18,14 @@ Search Callbacks
 				<th>Contact Name</th>
 				<th>Industry</th>
 				<th>Disposition</th>
+				<th>Comments</th>
 			</tr>
 		</thead>
 		<tbody>
-			@foreach($list as $callback)
+			@foreach($callbacks as $callback)
 			<tr style='font-size: 12px;<?php if($today == $callback->date) { echo'background-color:#F08080;'; }?>' >
 				<td style="text-align: center;">
-					<a href="view_callback/<?php echo $callback->id; ?>"><img class="view_btn" style="cursor: pointer;" width="15px" src={{ URL::base() . '/img/view.png' }} /></a>
+					<a href="<?php echo URL::to('view_callback/'. $callback->id); ?>"><img class="view_btn" style="cursor: pointer;" width="15px" src={{ URL::base() . '/img/view.png' }} /></a>
 				</td>
 				<?php if(Auth::user()->account->type->name == 'supervisor') { echo '<td>'. $callback->account->user->username .'</td>'; } ?>
 				<td>{{ $callback->date }}</td>
@@ -64,13 +34,12 @@ Search Callbacks
 				<td>{{ $callback->contact_name }}</td>
 				<td>{{ $callback->industry_name }}</td>
 				<td>{{ $callback->disposition->name }}</td>
+				<td>{{ $callback->comments }}</td>
 			</tr>
 			@endforeach
 		</tbody>
 	</table>
-	@endif
-@endsection
+	@endsection
 
 @section('scripts')
-
 @endsection

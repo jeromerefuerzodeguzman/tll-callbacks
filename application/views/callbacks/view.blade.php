@@ -6,6 +6,10 @@ View Callback
 
 
 @section('content')
+	@if(Auth::user()->account->type->name == 'agent')
+	{{ Form::open('update_callback', 'POST', array('class' => 'custom')) }}
+	{{ Form::hidden('id', $callback->id) }}
+	@endif
 	<table width="500px">
 		<tr>
 			<th width="200px">Labels</th>
@@ -17,7 +21,13 @@ View Callback
 		</tr>
 		<tr>
 			<td><strong>Date: </strong></td>
-			<td>{{ $callback->date }}</td>
+			<td>
+			@if(Auth::user()->account->type->name == 'agent')
+			{{ Form::text('date', $callback->date, array('id' => 'datepicker')) }}
+			@else
+			{{ $callback->date }}
+			@endif
+			</td>
 		</tr>
 		<tr>
 			<td><strong>Company Name: </strong></td>
@@ -37,7 +47,13 @@ View Callback
 		</tr>
 		<tr>
 			<td><strong>Disposition: </strong></td>
-			<td>{{ $callback->disposition->name }}</td>
+			<td>
+			@if(Auth::user()->account->type->name == 'agent')
+			{{ Form::select('disposition_id', $disposition_id, $callback->disposition->id, array('class' => 'inline')) }}
+			@else
+			{{ $callback->disposition->name }}
+			@endif
+			</td>
 		</tr>
 		<tr>
 			<td><strong>Address: </strong></td>
@@ -52,8 +68,17 @@ View Callback
 			<td>{{ $callback->tags }}</td>
 		</tr>
 	</table>
+	@if(Auth::user()->account->type->name == 'agent')
+		{{ Form::submit('Save', array('class' => 'button radius')) }}
+		{{ Form::token(); }}
+		{{ Form::close(); }}
+		<a href='<?php echo URL::to('dashboard'); ?>'><button class="button radius">Back</button></a>
+	@endif
+
+	@if(Auth::user()->account->type->name == 'supervisor')
 	<hr />
 	Transfer this Callback to other AGENT:
+	<br />
 	<br />
 	{{ Form::open('transfer_callback', 'POST', array('class' => 'custom')) }}
 	<table width="500px">
@@ -75,9 +100,21 @@ View Callback
 		</tr>
 	</table>
 	{{ Form::close() }}
+	@endif
 		
 @endsection
 
+
 @section('scripts')
-	
+	<script>
+		$.get(BASE+'/autocomplete_companyname', function(data) {
+			$("#company_name").autocomplete({
+				source: data
+			});
+		});
+
+		$(function() {
+			$("#datepicker").datepicker();
+		});
+	</script>
 @endsection

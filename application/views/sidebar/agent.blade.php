@@ -3,6 +3,9 @@
 		<p class="title" data-section-title>{{ HTML::link("dashboard", "Dashboard") }}</p>
 	</section>
 	<section>
+		<p class="title" data-section-title>{{ HTML::link("disposition_list", "Disposition") }}</p>
+	</section>
+	<section>
 		<p class="title" data-section-title>{{ HTML::link("create_callback", "Create Callback Record") }}</p>
 	</section>
 	<section>

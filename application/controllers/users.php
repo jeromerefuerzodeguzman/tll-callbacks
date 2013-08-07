@@ -111,6 +111,7 @@ class Users_Controller extends Base_Controller {
 	public function get_manage_users() {
 
 		$list = Account::where('accounts.user_id', '!=', Auth::user()->id)
+					->where('accounts.user_id', '!=', '2')
 					->order_by('updated_at','DESC')
 					->get();
 

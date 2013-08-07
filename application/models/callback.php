@@ -32,19 +32,31 @@ class Callback extends Eloquent {
 		return Validator::make($data,$rules);
 	}
 
+	public static function validate_update_callback($data) {
+
+		$rules = array(
+			'date' => 'required|min:2',
+			'disposition_id' => 'required',
+			'id' => 'required'
+		);
+		return Validator::make($data,$rules);
+	}
+
 	public static function validate_search($data) {
 
 		$rules = array(
 			'field' => 'required',
+			'account_type' => 'required',
+			'account_id' => 'required',
 			'keyword' => 'required|min:2'
 		);
 		return Validator::make($data,$rules);
 	}
 
 	public static function disposition_list() {
-		$list = DB::table('callbacks')
-				->join('dispositions', 'callbacks.disposition_id', '=', 'dispositions.id')
-				->select(array('dispositions.name', DB::raw('COUNT(*) as ctr')))
+		$list = DB::table('dispositions')
+				->left_join('callbacks', 'callbacks.disposition_id', '=', 'dispositions.id')
+				->select(array('dispositions.name', DB::raw('COUNT(tll_callbacks.disposition_id) as ctr')))
 				->group_by('dispositions.name')
 				->order_by('ctr', 'desc')
 				->get();
@@ -52,13 +64,45 @@ class Callback extends Eloquent {
 		return $list;
 	}
 
+	public static function disposition_list_bydate($date) {
+		$list =	DB::table('dispositions')
+				->left_join('callbacks', 'callbacks.disposition_id', '=', 'dispositions.id')
+				->select(array('dispositions.name', DB::raw('COUNT(tll_callbacks.disposition_id) as ctr')))
+				->where('date', '=', $date)
+				->group_by('dispositions.name')
+				->order_by('ctr', 'desc')
+				->get();
+
+
+		return $list;
+	}
+
 	public static function agent_list() {
 		$list = DB::table('callbacks')
+				->join('dispositions', 'callbacks.disposition_id', '=', 'dispositions.id')
 				->join('accounts', 'callbacks.account_id', '=', 'accounts.id')
 				->join('users', 'accounts.user_id', '=', 'users.id')
-				->select(array('users.username', 'accounts.fname', 'accounts.lname', DB::raw('COUNT(*) as ctr')))
+				->select(array('accounts.id as account_id', 'users.username', 'dispositions.name', 'dispositions.id', DB::raw('COUNT(*) as ctr')))
 				->group_by('users.username')
-				->order_by('ctr', 'desc')
+				->group_by('dispositions.name')
+				->order_by('users.username', 'desc')
+				->order_by('dispositions.id', 'asc')
+				->get();
+
+		return $list;
+	}
+
+	public static function agent_list_bydate($date) {
+		$list = DB::table('callbacks')
+				->join('dispositions', 'callbacks.disposition_id', '=', 'dispositions.id')
+				->join('accounts', 'callbacks.account_id', '=', 'accounts.id')
+				->join('users', 'accounts.user_id', '=', 'users.id')
+				->select(array('accounts.id as account_id', 'users.username', 'dispositions.name', 'dispositions.id', DB::raw('COUNT(*) as ctr')))
+				->where('date', '=', $date)
+				->group_by('users.username')
+				->group_by('dispositions.name')
+				->order_by('users.username', 'desc')
+				->order_by('dispositions.id', 'asc')
 				->get();
 
 		return $list;
@@ -77,6 +121,15 @@ class Callback extends Eloquent {
 
 		return $list;
 	}
+
+
+
+	public static function unassigned_callbacks($id) {
+		$affected = DB::table('callbacks')
+    					->where('account_id', '=', $id)
+  						->update(array('account_id' => '1'));
+
+	}	
 
 
 }

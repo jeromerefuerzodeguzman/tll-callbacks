@@ -58,15 +58,48 @@ class Callbacks_Controller extends Base_Controller {
 
 	public function get_disposition_list() {
 		$list = Callback::disposition_list();
+		$today = date('m/d/Y');
+		$list_bydate = Callback::disposition_list_bydate($today);
 
 		return View::make('callbacks.disposition_list')
+			->with('today', $today)
+			->with('lists_bydate', $list_bydate)
+			->with('lists', $list);
+		
+	}
+
+
+	public function post_disposition_list_bydate() {
+		$list = Callback::disposition_list();
+		$date = Input::get('date');
+		$list_bydate = Callback::disposition_list_bydate($date);
+
+		return View::make('callbacks.disposition_list')
+			->with('today', $date)
+			->with('lists_bydate', $list_bydate)
 			->with('lists', $list);
 	}
+	
 
 	public function get_agent_list() {
 		$list = Callback::agent_list();
+		$today = date('m/d/Y');
+		$list_bydate = Callback::agent_list_bydate($today);
 
 		return View::make('callbacks.agent_list')
+			->with('today', $today)
+			->with('lists_bydate', $list_bydate)
+			->with('lists', $list);
+	}
+
+	public function post_agent_list_bydate() {
+		$list = Callback::agent_list();
+		$date = Input::get('date');
+		$list_bydate = Callback::agent_list_bydate($date);
+
+		return View::make('callbacks.agent_list')
+			->with('today', $date)
+			->with('lists_bydate', $list_bydate)
 			->with('lists', $list);
 	}
 
@@ -75,8 +108,12 @@ class Callbacks_Controller extends Base_Controller {
 		$users_holder = Callback::agent_account_id();
 		$users = parent::convert_to_array($users_holder);
 
+		$disposition_list_holder = Disposition::get(array('id','name'));
+		$disposition_list = parent::convert_to_array($disposition_list_holder);
+
 
 		return View::make('callbacks.view')
+				->with('disposition_id', $disposition_list)
 				->with('callback_id', $id)
 				->with('users', $users)
 				->with('callback', $callback);
@@ -88,7 +125,9 @@ class Callbacks_Controller extends Base_Controller {
 				'' => '',
 				'company_name' => 'Company Name',
 				'telephone_number' => 'Phone Number',
-				'contact_name' => 'Contact Name'
+				'contact_name' => 'Contact Name',
+				'tags' => 'Tags',
+				'disposition' => 'Disposition'
 			);
 			return View::make('callbacks.search')
 						->with('field', $field);
@@ -99,14 +138,32 @@ class Callbacks_Controller extends Base_Controller {
 				'' => '',
 				'company_name' => 'Company Name',
 				'telephone_number' => 'Phone Number',
-				'contact_name' => 'Contact Name'
+				'contact_name' => 'Contact Name',
+				'tags' => 'Tags',
+				'disposition' => 'Disposition'
 			);
 		$validation = Callback::validate_search(Input::all());
 
 		if($validation->fails()) {
 			return  Redirect::to('search')->with_errors($validation)->with_input();
 		} else {
-			$list = Callback::where(Input::get('field') ,'=' , Input::get('keyword'))->get();
+			if(Input::get('field') == 'disposition') {
+				$searching_field = 'disposition_id';
+				$search_keyword = Disposition::where('name', 'like', Input::get('keyword') . '%')->first();
+				$keyword = $search_keyword->id;
+			} else {
+				$searching_field = Input::get('field');
+				$keyword = Input::get('keyword');
+			}
+
+			if(Input::get('account_type') == 'agent') {
+				$list = Callback::where($searching_field ,'like' , '%'. $keyword .'%')
+								->where('account_id', '=', Input::get('account_id'))
+								->get();
+			} else {
+				$list = Callback::where($searching_field ,'like' , '%'. $keyword .'%')->get();
+			}
+			
 
 			return View::make('callbacks.search')
 						->with('today', date('m/d/Y'))
@@ -129,6 +186,40 @@ class Callbacks_Controller extends Base_Controller {
 			return Redirect::to('dashboard')
 					->with('message', 'Callback Transfered');
 		}
+	}
+
+	public function post_update() {
+		$validation = Callback::validate_update_callback(Input::all());
+
+		if($validation->fails()) {
+			return  Redirect::to('view_callback/'. Input::get('id'))->with_errors($validation)->with_input();
+		} else {
+			var_dump(Input::all());
+			$callback = Callback::find(Input::get('id'));
+			$callback->disposition_id = Input::get('disposition_id');
+			$callback->date = Input::get('date');
+			$callback->timestamp();
+			$callback->save();
+
+			return Redirect::to('view_callback/'. Input::get('id'))
+					->with('message', 'Callback Updated');
+		}
+
+	}
+
+
+	public function get_agent_callbacks($id) {
+		$list = Callback::where('account_id', '=', $id)
+					->order_by('date', 'desc')
+					->get();
+
+		$agent = Account::find($id);
+
+		return View::make('callbacks.agent_callbacks')
+				->with('agent', $agent)
+				->with('today', date('m/d/Y'))
+				->with('callbacks', $list);
+
 	}
 
 }

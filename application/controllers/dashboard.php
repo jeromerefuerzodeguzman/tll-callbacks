@@ -17,16 +17,18 @@ class Dashboard_Controller extends Base_Controller {
 									->get();
 
 			$ecallbacks_list =  Callback::where('date', '<', date('m/d/Y'))
-									->order_by('date', 'asc')
+									->order_by('date', 'desc')
 									->get();
 		} else {
 			$account_id = Account::find(Auth::user()->id);
 			$callback_list = Callback::where('account_id' ,'=' , $account_id->id)
 									->where('date', '>=', date('m/d/Y'))
+									->order_by('date', 'asc')
 									->get();
 
 			$ecallbacks_list =  Callback::where('account_id' ,'=' , $account_id->id)
 									->where('date', '<', date('m/d/Y'))
+									->order_by('date', 'desc')
 									->get();
 		}
 

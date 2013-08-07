@@ -26,6 +26,7 @@ class Create_Default_Supervisor {
 					'created_at' => date('Y-m-d H:i:s'),
 					'updated_at' => date('Y-m-d H:i:s')
 				));
+
 	}
 
 	/**

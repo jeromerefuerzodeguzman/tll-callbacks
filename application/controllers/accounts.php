@@ -24,6 +24,7 @@ class Accounts_Controller extends Base_Controller {
 
 		$account = Account::find(Input::get('account_id'));
 		$user = User::find($account->user_id);
+		$callbacks = Callback::unassigned_callbacks(Input::get('account_id'));
 		$account->delete();
 		$user->delete();
 
